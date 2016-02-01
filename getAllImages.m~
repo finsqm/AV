@@ -1,0 +1,41 @@
+function [img_cell, norm_img_cell, bg_img_cell] = getAllImages()
+%getAllImages returns all images in a 210*480*640*3 cell
+
+img_cell = cell(210);
+norm_img_cell = cell(210);
+bg_img_cell = cell(3);
+
+for i = 1 : 211
+    
+    if i == 211
+        filename = 'DATA1/bgframe.jpg', int2str(109+i), '.jpg');
+    else
+        filename = strcat('DATA1/frame', int2str(109+i), '.jpg');
+    end
+    img_cell{i} = imread(filename);
+    
+    
+    %Normalize image
+    R = double(img_cell{i}(:,:,1));
+    G = double(img_cell{i}(:,:,2));
+    B = double(img_cell{i}(:,:,3));
+
+    NormalizedRed = R(:,:)./sqrt(R(:,:).^2+G(:,:).^2+B(:,:).^2);
+    NormalizedGreen = G(:,:)./sqrt(R(:,:).^2+G(:,:).^2+B(:,:).^2);
+    NormalizedBlue = B(:,:)./sqrt(R(:,:).^2+G(:,:).^2+B(:,:).^2);
+    
+    
+    norm(:,:,1) = NormalizedRed(:,:);
+    norm(:,:,2) = NormalizedGreen(:,:);
+    norm(:,:,3) = NormalizedBlue(:,:);
+    
+    norm_img_cell{i} = norm;
+    
+end
+
+
+
+
+
+end
+
