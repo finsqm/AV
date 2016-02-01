@@ -1,0 +1,13 @@
+function img_array = load_train()
+% function for loading training data
+% no args
+
+img_array = zeros(480,640,3,32);
+
+for i = 1 : N
+    
+    img_array(:,:,:,i) = imread('train')
+
+
+end
+

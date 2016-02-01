@@ -1,0 +1,17 @@
+I = imread('train1.jpg');
+BW = edge(rgb2gray(I), 'canny');
+BW2 = bwareaopen(BW, 700);
+BW3 = imfill(BW2, 'holes');
+[B,L] = bwboundaries(BW2,'noholes');
+% Display the label matrix and draw each boundary
+figure; imshow(I)
+hold on
+boundary = B{1};
+plot(boundary(:,2), boundary(:,1), 'r', 'LineWidth', 5)
+[ height_min, height_max, width_min, width_max ] = corners( boundary );
+
+crop = I(height_min:height_max, width_min:width_max, :);
+BW = edge(rgb2gray(crop));
+BW2 = bwareaopen(BW, 50);
+figure; imshow(BW2)
+
