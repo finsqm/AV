@@ -1,0 +1,25 @@
+
+thres = 0.25;
+
+
+a_hsv = hsv_img_cell{87};
+a_hsv = a_hsv - bg_img_cell{3}; 
+
+a_bw = a_hsv(:,:,2) >= thres;
+
+%se = strel('diamond', 1);
+%a_bw = imerode(a_bw, se);
+
+%map 
+a_bw(:, 1:320) = 0;
+a_bw(240:480, :) = 0;
+a_bw(:, 540:640) = 0;
+
+se = strel('diamond', 6);
+a_bw = imdilate(a_bw, se);
+
+
+%[labelled, num] = bwlabel(a_bw,4);
+
+%STATS = regionprops(labelled, {'Area', 'BoundingBox', 'Centroid', 'Solidity'});
+
