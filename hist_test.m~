@@ -1,0 +1,23 @@
+%[img_cell, norm_img_cell, hsv_img_cell, bg_img_cell] = getAllImages();
+
+show = 1;
+
+for i = 1 : 210
+    
+[ centers, radii ] = extractDancers( i , bg_img_cell, hsv_img_cell );
+
+[N, ~] = size(centers);
+
+hists = [];
+small_norms = cell(4);
+
+for j = 1 : N
+    small_norm = norm_img_cell{i}(centers(j,2) - radii(j) : centers(j,2) + radii(j),...
+        centers(j,1) - radii(j) : centers(j,1) + radii(j),:);
+    [ hist ] = getRGBhists( small_norm, show );
+    small_norms {j} = small_norm;
+    figure
+    imshow(small_norm)
+end
+
+end

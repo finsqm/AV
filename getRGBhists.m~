@@ -1,0 +1,9 @@
+function [ hists ] = getRGBhists( img )
+% Returns hists of norm RGB images
+
+hists = zeros(2,255);
+[R, C] = size(img)
+
+for i = 1 : 
+end
+
