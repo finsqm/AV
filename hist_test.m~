@@ -1,10 +1,10 @@
 %[img_cell, norm_img_cell, hsv_img_cell, bg_img_cell] = getAllImages();
 
-show = 1;
+show = 0;
 
-for i = 1 : 1
+for img_idx = 1 : 2
     
-[ centers, radii ] = extractDancers( i , bg_img_cell, hsv_img_cell );
+[ centers, radii ] = extractDancers( img_idx , bg_img_cell, hsv_img_cell );
 
 [N, ~] = size(centers);
 
@@ -18,45 +18,94 @@ for j = 1 : N
     c2 = floor(centers(j,2));
     r1 = floor(radii(j));
     
-    small_norm = norm_img_cell{i}(c2-r1 : c2+r1, c1-r1 : c1+r1, :);
+    small_norm = norm_img_cell{img_idx}(c2-r1 : c2+r1, c1-r1 : c1+r1, :);
     
     small_norm = floor((small_norm * 255));
-    figure
+    %figure
     [ hist ] = getRGBhists( small_norm, show );
     hists = [hists hist];
     
-    norm_hist = hist ./ max(hist);
+    norm_hist = hist ./ sum(hist);
     norm_hists = [norm_hists norm_hist];
     
     small_norms{j} = small_norm;
 end
 
+dists = cell(4);
+
 % set initial labels
 if (img_idx == 1)
    person1 = norm_hists(:,1);
+   person1_center = centers(1,:);
+   person1_radius = radii(1);
+   prev1 = person1;
+   
    person2 = norm_hists(:,2);
+   person2_center = centers(2,:);
+   person2_radius = radii(2);
+   prev2 = person2;
+   
    person3 = norm_hists(:,3);
-   person4 = norm_his
+   person3_center = centers(3,:);
+   person3_radius = radii(3);
+   prev3 = person3;
+   
+   person4 = norm_hists(:,4);
+   person4_center = centers(4,:);
+   person4_radius = radii(4);
+   prev4 = person4;
 else
     
+    for d = 1 : 4
+       d1 = histdist(norm_hists(:,d), prev1);
+       d2 = histdist(norm_hists(:,d), prev2);
+       d3 = histdist(norm_hists(:,d), prev3);
+       d4 = histdist(norm_hists(:,d), prev4);
+       
+       dists{d} = [d1, d2, d3, d4];
+    end
+    
+    all_perms = perms([1 2 3 4]);
+    
+    min_score = 
+    
+    for p = 1 : size(all_perms, 1)
+       this_perm = all_perms(p);
+       score = sum([ dists{1}(this_perm(1)) dists{2}(this_perm(2)) ...
+                        dists{3}(this_perm(3)) dists{4}(this_perm(4)) ]);
+                    
+    end
+    
+   person1 = norm_hists(:,1);
+   person1_center = centers(1,:);
+   person1_radius = radii(1);
+   prev1 = person1;
+   
+   person2 = norm_hists(:,2);
+   person2_center = centers(2,:);
+   person2_radius = radii(2);
+   prev2 = person2;
+   
+   person3 = norm_hists(:,3);
+   person3_center = centers(3,:);
+   person3_radius = radii(3);
+   prev3 = person3;
+   
+   person4 = norm_hists(:,4);
+   person4_center = centers(4,:);
+   person4_radius = radii(4);
+   prev4 = person4;
+
 end
+
 
 imshow(img_cell{img_idx});
 hold on
-
-
-viscircles(
+viscircles(person1_center, person1_radius, 'EdgeColor', 'b');
+viscircles(person2_center, person2_radius, 'EdgeColor', 'r');
+viscircles(person3_center, person3_radius, 'EdgeColor', 'g');
+viscircles(person4_center, person4_radius, 'EdgeColor', 'y');
 hold off
-
-% to get distance between hists (bhata... distance) :
-% dist = sum(sqrt(norm_hists(:,1)).*sqrt(norm_hists(:,2)))
-
-%next steps:
-% now have normalized histogram for each person in each image
-% will compare the individual histograms from the prev image to the 
-% current image to try to identify which person is which
-% will need 4 labels (ie four different coloured circles)
-% 
-
+figure
 
 end
