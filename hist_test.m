@@ -4,6 +4,7 @@
 % too much
 % - when people start hugging (big blobs), don't just halve the area - we
 % know the area should be about 1000...
+%nice ideas
 
 
 %[img_cell, norm_img_cell, hsv_img_cell, bg_img_cell] = getAllImages();
