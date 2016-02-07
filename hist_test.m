@@ -2,7 +2,7 @@
 
 show = 1;
 
-for i = 2 : 2
+for i = 1 : 1
     
 [ centers, radii ] = extractDancers( i , bg_img_cell, hsv_img_cell );
 
@@ -10,38 +10,53 @@ for i = 2 : 2
 
 hists = [];
 small_norms = cell(4);
+norm_hists = [];
 
-%hsv = hsv_img_cell{i};
-
-%v_mean = mean(mean(hsv(:,:,3)));
-
-%H = hsv(:,:,1);
-%S = hsv(:,:,2);
-%V = hsv(:,:,3);
-
-%norm_hsv(:,:,1) = H;
-%norm_hsv(:,:,2) = S;
-%norm_hsv(:,:,3) = repmat(v_mean,480,640);
-
-%norm_rgb = hsv2rgb(norm_hsv);
-
-
-% TODO
-% ---------------------
-% WILL HAVE TO normalize each histogram over the sum of the histogram
-% so num in each bin will be between 0 - 1
-%
-% idea: concat r and g histograms (512 bins)
-% 
-% ---------------------
 
 for j = 1 : N
-    small_norm = norm_img_cell{i}(centers(j,2) - radii(j) : centers(j,2) + radii(j),...
-        centers(j,1) - radii(j) : centers(j,1) + radii(j),:);
+    c1 = floor(centers(j,1));
+    c2 = floor(centers(j,2));
+    r1 = floor(radii(j));
+    
+    small_norm = norm_img_cell{i}(c2-r1 : c2+r1, c1-r1 : c1+r1, :);
+    
     small_norm = floor((small_norm * 255));
     figure
     [ hist ] = getRGBhists( small_norm, show );
-    small_norms {j} = small_norm;
+    hists = [hists hist];
+    
+    norm_hist = hist ./ max(hist);
+    norm_hists = [norm_hists norm_hist];
+    
+    small_norms{j} = small_norm;
 end
+
+% set initial labels
+if (img_idx == 1)
+   person1 = norm_hists(:,1);
+   person1_center = centers(1,:);
+   person1_radius =
+   person2 = norm_hists(:,2);
+   person3 = norm_hists(:,3);
+   person4 = norm_hists(:,4);
+else
+    
+end
+
+imshow(img_cell{img_idx});
+hold on
+viscircles(
+hold off
+
+% to get distance between hists (bhata... distance) :
+% dist = sum(sqrt(norm_hists(:,1)).*sqrt(norm_hists(:,2)))
+
+%next steps:
+% now have normalized histogram for each person in each image
+% will compare the individual histograms from the prev image to the 
+% current image to try to identify which person is which
+% will need 4 labels (ie four different coloured circles)
+% 
+
 
 end
