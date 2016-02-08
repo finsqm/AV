@@ -1,8 +1,17 @@
+
+% IDEAS:
+% - do not just take square around detected person - floor affects the hist
+% too much
+% - when people start hugging (big blobs), don't just halve the area - we
+% know the area should be about 1000...
+%nice ideas
+
+
 %[img_cell, norm_img_cell, hsv_img_cell, bg_img_cell] = getAllImages();
 
 show = 0;
 
-for img_idx = 1 : 2
+for img_idx = 19 : 19
     
 [ centers, radii ] = extractDancers( img_idx , bg_img_cell, hsv_img_cell );
 
@@ -21,6 +30,16 @@ for j = 1 : N
     small_norm = norm_img_cell{img_idx}(c2-r1 : c2+r1, c1-r1 : c1+r1, :);
     
     small_norm = floor((small_norm * 255));
+    
+    %only get the object from small_norm (remove the background)
+    small_bg = bg_img_cell{3}(c2-r1 : c2+r1, c1-r1 : c1+r1, :);
+    small_hsv = hsv_img_cell{img_idx}(c2-r1 : c2+r1, c1-r1 : c1+r1, :);
+    a_hsv = a_hsv - bg_img_cell{3}; 
+
+    %img to black/white
+    a_bw = a_hsv(:,:,2) >= thres;
+    
+    
     %figure
     [ hist ] = getRGBhists( small_norm, show );
     hists = [hists hist];
@@ -34,7 +53,7 @@ end
 dists = cell(4);
 
 % set initial labels
-if (img_idx == 1)
+if (img_idx == 19)
    person1 = norm_hists(:,1);
    person1_center = centers(1,:);
    person1_radius = radii(1);
@@ -67,33 +86,37 @@ else
     
     all_perms = perms([1 2 3 4]);
     
-    min_score = 
+    min_score = 5; % because max score can only be 4...
     
     for p = 1 : size(all_perms, 1)
-       this_perm = all_perms(p);
+       this_perm = all_perms(p,:);
        score = sum([ dists{1}(this_perm(1)) dists{2}(this_perm(2)) ...
                         dists{3}(this_perm(3)) dists{4}(this_perm(4)) ]);
                     
+       if score < min_score
+          min_score = score; 
+          min_perm = this_perm;
+       end
     end
     
-   person1 = norm_hists(:,1);
-   person1_center = centers(1,:);
-   person1_radius = radii(1);
+   person1 = norm_hists(:,min_perm(1));
+   person1_center = centers(min_perm(1),:);
+   person1_radius = radii(min_perm(1));
    prev1 = person1;
    
-   person2 = norm_hists(:,2);
-   person2_center = centers(2,:);
-   person2_radius = radii(2);
+   person2 = norm_hists(:,min_perm(2));
+   person2_center = centers(min_perm(2),:);
+   person2_radius = radii(min_perm(2));
    prev2 = person2;
    
-   person3 = norm_hists(:,3);
-   person3_center = centers(3,:);
-   person3_radius = radii(3);
+   person3 = norm_hists(:,min_perm(3));
+   person3_center = centers(min_perm(3),:);
+   person3_radius = radii(min_perm(3));
    prev3 = person3;
    
-   person4 = norm_hists(:,4);
-   person4_center = centers(4,:);
-   person4_radius = radii(4);
+   person4 = norm_hists(:,min_perm(4));
+   person4_center = centers(min_perm(4),:);
+   person4_radius = radii(min_perm(4));
    prev4 = person4;
 
 end
@@ -106,6 +129,7 @@ viscircles(person2_center, person2_radius, 'EdgeColor', 'r');
 viscircles(person3_center, person3_radius, 'EdgeColor', 'g');
 viscircles(person4_center, person4_radius, 'EdgeColor', 'y');
 hold off
-figure
+
+w = waitforbuttonpress;
 
 end

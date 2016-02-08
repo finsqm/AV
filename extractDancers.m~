@@ -1,12 +1,11 @@
-function [ centers, radii, pixel_lists ] = extractDancers( img_idx )
+function [ centers, radii ] = extractDancers( img_idx, bg_img_cell, hsv_img_cell )
 %UNTITLED Summary of this function goes here
 %   Detailed explanation goes here
 
+thres = 0.25;
+
 centers = [];
 radii = [];
-pixel_lists = [];
-
-[img_cell, norm_img_cell, hsv_img_cell, bg_img_cell] = getAllImages();
 
 a_hsv = hsv_img_cell{img_idx};
 a_hsv = a_hsv - bg_img_cell{3}; 
@@ -22,8 +21,11 @@ a_bw(240:480, :) = 0;
 a_bw(:, 540:640) = 0;
 
 %dilate img
-se = strel('disk', 6);
-a_bw = imdilate(a_bw, se);
+%se = strel('disk', 6);
+%a_bw = imdilate(a_bw, se);
+
+a_bw = bwmorph(a_bw, 'close', 2);
+
 
 
 %full labelled image
@@ -99,12 +101,7 @@ if num > 0
     centers = [centers f_centers];
     radii = [radii f_radii];
     
-    % for each cent
     
-    
-    %hold on
-    %viscircles(f_centers, f_radii);
-    %hold off
 end
 
 %get the non-fat circles info
@@ -122,12 +119,6 @@ diameters = mean([majorAx minorAx], 2);
 
 centers = [centers n_centers];
 radii = [radii n_radii];
-
-%display the circles on the image
-%hold on
-%viscircles(centers, radii);
-%hold off
-
 
 
 end

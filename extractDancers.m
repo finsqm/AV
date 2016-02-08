@@ -25,6 +25,7 @@ se = strel('disk', 6);
 a_bw = imdilate(a_bw, se);
 
 
+
 %full labelled image
 [labelled, num] = bwlabel(a_bw,4);
 
@@ -36,7 +37,7 @@ idx = find([STATS.Area] > 800);
 bw2 = ismember(labelled, idx);
 
 
-
+imshow(bw2);
 
 [labelled, num] = bwlabel(bw2,4);
 
@@ -67,7 +68,7 @@ if num > 0
     orient_angle = -1 * [STATS.Orientation];
 
     cents = cat(1, STATS.Centroid);
-    majAx = cat(1, STATS.MajorAxisLength)
+    majAx = cat(1, STATS.MajorAxisLength);
     minAx = cat(1, STATS.MinorAxisLength);
 
     quarters = repmat(0.25, num, 1);
@@ -95,7 +96,7 @@ if num > 0
     f_radii = diameters/2;
 
     
-    centers = [centers f_centers];
+    centers = [centers ; f_centers];
     radii = [radii f_radii];
     
     
@@ -114,7 +115,7 @@ diameters = mean([majorAx minorAx], 2);
 [n_radii] = diameters/2;
 
 
-centers = [centers n_centers];
+centers = [centers ; n_centers];
 radii = [radii n_radii];
 
 

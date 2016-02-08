@@ -30,8 +30,16 @@ for j = 1 : N
     small_norm = norm_img_cell{img_idx}(c2-r1 : c2+r1, c1-r1 : c1+r1, :);
     
     small_norm = floor((small_norm * 255));
+    
+    %only get the object from small_norm (remove the background)
+    small_bg = bg_img_cell{2}(c2-r1 : c2+r1, c1-r1 : c1+r1, :);
+    %small_hsv = hsv_img_cell{img_idx}(c2-r1 : c2+r1, c1-r1 : c1+r1, :);
+    %small_img = img_cell{img_idx}(c2-r1 : c2+r1, c1-r1 : c1+r1, :);
+    a_norm = small_norm - small_bg;
+    
+    
     %figure
-    [ hist ] = getRGBhists( small_norm, show );
+    [ hist ] = getRGBhists( a_norm, show );
     hists = [hists hist];
     
     norm_hist = hist ./ sum(hist);
