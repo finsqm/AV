@@ -22,9 +22,9 @@ for i = 1 : 211
     G = double(img(:,:,2));
     B = double(img(:,:,3));
 
-    NormalizedRed = R(:,:)./sqrt(R(:,:).^2+G(:,:).^2+B(:,:).^2);
-    NormalizedGreen = G(:,:)./sqrt(R(:,:).^2+G(:,:).^2+B(:,:).^2);
-    NormalizedBlue = B(:,:)./sqrt(R(:,:).^2+G(:,:).^2+B(:,:).^2);
+    NormalizedRed = R(:,:)./(R(:,:)+G(:,:)+B(:,:));
+    NormalizedGreen = G(:,:)./(R(:,:)+G(:,:)+B(:,:));
+    NormalizedBlue = B(:,:)./(R(:,:)+G(:,:)+B(:,:));
     
     
     norm(:,:,1) = NormalizedRed(:,:);

@@ -8,7 +8,7 @@ centers = [];
 radii = [];
 
 a_hsv = hsv_img_cell{img_idx};
-a_hsv = a_hsv - bg_img_cell{3}; 
+a_hsv = abs(a_hsv - bg_img_cell{3}); 
 
 %img to black/white
 a_bw = a_hsv(:,:,2) >= thres;
@@ -20,10 +20,15 @@ a_bw(240:480, :) = 0;
 %map pixels to the right of the dancers
 a_bw(:, 540:640) = 0;
 
+
+
 %dilate img
 se = strel('disk', 6);
 a_bw = imdilate(a_bw, se);
-
+%a_bw = bwmorph(a_bw, 'dilate', 1);
+%a_bw = bwmorph(a_bw, 'open', Inf);
+%a_bw = bwmorph(a_bw, 'bridge', Inf);
+%a_bw = bwmorph(a_bw, 'fill', 10);
 
 
 %full labelled image
@@ -36,8 +41,6 @@ STATS = regionprops(labelled, {'Area', 'BoundingBox', 'Centroid', 'Solidity', 'M
 idx = find([STATS.Area] > 800);
 bw2 = ismember(labelled, idx);
 
-
-imshow(bw2);
 
 [labelled, num] = bwlabel(bw2,4);
 
@@ -106,7 +109,13 @@ end
 [labelled2, num2] = bwlabel(bw_no_fats,4);
 
 STATS2 = regionprops(labelled2, {'Area', 'BoundingBox', 'Centroid', 'Solidity', 'MajorAxisLength',... 
-    'MinorAxisLength', 'Orientation'});
+    'MinorAxisLength', 'Orientation', 'PixelIdxList'});
+
+%pixelIdxList = cell(4);
+%pixelIdxList{1} = STATS2(1).PixelIdxList;
+%pixelIdxList{2} = STATS2(2).PixelIdxList;
+%pixelIdxList{3} = STATS2(3).PixelIdxList;
+%pixelIdxList{4} = STATS2(4).PixelIdxList;
 
 n_centers = cat(1, STATS2.Centroid);
 majorAx = cat(1, STATS2.MajorAxisLength);

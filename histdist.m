@@ -3,10 +3,10 @@ function [ dist ] = histdist(h1, h2)
 %   Detailed explandation goes here
 
 %euclidean dist
-dist = sqrt(sum((h1 - h2) .^ 2));
+%dist = sqrt(sum((h1 - h2) .^ 2));
 
 %bhat.. dist
-%dist = sum(sqrt(h1).*sqrt(h2));
+dist = 1 - sum(sqrt(h1).*sqrt(h2));
 
 end
 
