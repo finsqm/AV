@@ -30,7 +30,6 @@ a_bw = imdilate(a_bw, se);
 %a_bw = bwmorph(a_bw, 'bridge', Inf);
 %a_bw = bwmorph(a_bw, 'fill', 10);
 
-
 %full labelled image
 [labelled, num] = bwlabel(a_bw,4);
 
@@ -41,6 +40,7 @@ STATS = regionprops(labelled, {'Area', 'BoundingBox', 'Centroid', 'Solidity', 'M
 idx = find([STATS.Area] > 800);
 bw2 = ismember(labelled, idx);
 
+imshow(bw2)
 
 [labelled, num] = bwlabel(bw2,4);
 

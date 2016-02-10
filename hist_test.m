@@ -13,7 +13,7 @@
 
 show = 0;
 
-start = 100;
+start = 40;
 
 for img_idx = start : 210
     
@@ -163,7 +163,7 @@ else
                       pos_dists{3}(this_perm(3)) pos_dists{4}(this_perm(4))]);
                     
                     
-       hw = 0.8;
+       hw = 0.9;
        hist_dists_sum = hw * hist_dists_sum;
        pos_dists_sum = (1-hw) * pos_dists_sum;
        score = sum([ hist_dists_sum pos_dists_sum]);
