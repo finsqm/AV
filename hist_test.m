@@ -13,7 +13,7 @@
 
 show = 0;
 
-start = 20;
+start = 100;
 
 for img_idx = start : 210
     
@@ -157,17 +157,16 @@ else
        %                 dists{3}(this_perm(3)) dists{4}(this_perm(4)) ]);
                     
        hist_dists_sum = sum([ dists{1}(this_perm(1)) dists{2}(this_perm(2)) ...
-                        dists{3}(this_perm(3)) dists{4}(this_perm(4)) ]);
+                     dists{3}(this_perm(3)) dists{4}(this_perm(4)) ]);
        
        pos_dists_sum = sum([pos_dists{1}(this_perm(1)) pos_dists{2}(this_perm(2)) ...
-                        pos_dists{3}(this_perm(3)) pos_dists{4}(this_perm(4))]);
+                      pos_dists{3}(this_perm(3)) pos_dists{4}(this_perm(4))]);
                     
                     
-       hw = 0;
+       hw = 0.8;
        hist_dists_sum = hw * hist_dists_sum;
        pos_dists_sum = (1-hw) * pos_dists_sum;
        score = sum([ hist_dists_sum pos_dists_sum]);
-                    
                     
        if score < min_score
           min_score = score; 
@@ -175,30 +174,30 @@ else
        end
     end
     
-   person1 = norm_hists(:,min_perm(1));
-   person1_center = centers(min_perm(1),:);
-   person1_radius = radii(min_perm(1));
+   person1 = norm_hists(:,find(min_perm == 1));
+   person1_center = centers(find(min_perm == 1),:);
+   person1_radius = radii(find(min_perm == 1));
    prev1 = person1;
    
    prev_pos1 = person1_center;
    
-   person2 = norm_hists(:,min_perm(2));
-   person2_center = centers(min_perm(2),:);
-   person2_radius = radii(min_perm(2));
+   person2 = norm_hists(:,find(min_perm == 2));
+   person2_center = centers(find(min_perm == 2),:);
+   person2_radius = radii(find(min_perm == 2));
    prev2 = person2;
    
    prev_pos2 = person2_center;
    
-   person3 = norm_hists(:,min_perm(3));
-   person3_center = centers(min_perm(3),:);
-   person3_radius = radii(min_perm(3));
+   person3 = norm_hists(:,find(min_perm == 3));
+   person3_center = centers(find(min_perm == 3),:);
+   person3_radius = radii(find(min_perm == 3));
    prev3 = person3;
    
    prev_pos3 = person3_center;
    
-   person4 = norm_hists(:,min_perm(4));
-   person4_center = centers(min_perm(4),:);
-   person4_radius = radii(min_perm(4));
+   person4 = norm_hists(:,find(min_perm == 4));
+   person4_center = centers(find(min_perm == 4),:);
+   person4_radius = radii(find(min_perm == 4));
    prev4 = person4;
    
    prev_pos4 = person4_center;
