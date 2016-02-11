@@ -10,8 +10,14 @@ radii = [];
 a_hsv = hsv_img_cell{img_idx};
 a_hsv = abs(a_hsv - bg_img_cell{3}); 
 
+figure
+imshow(a_hsv)
+
 %img to black/white
 a_bw = a_hsv(:,:,2) >= thres;
+
+figure
+imshow(a_bw)
 
 %map over all pixels to the left of the dancers
 a_bw(:, 1:320) = 0;
@@ -20,11 +26,16 @@ a_bw(240:480, :) = 0;
 %map pixels to the right of the dancers
 a_bw(:, 540:640) = 0;
 
+figure
+imshow(a_bw)
 
 
 %dilate img
 se = strel('disk', 6);
 a_bw = imdilate(a_bw, se);
+
+figure
+imshow(a_bw)
 %a_bw = bwmorph(a_bw, 'dilate', 1);
 %a_bw = bwmorph(a_bw, 'open', Inf);
 %a_bw = bwmorph(a_bw, 'bridge', Inf);
@@ -40,6 +51,9 @@ STATS = regionprops(labelled, {'Area', 'BoundingBox', 'Centroid', 'Solidity', 'M
 idx = find([STATS.Area] > 700);
 bw2 = ismember(labelled, idx);
 
+figure
+imshow(bw2)
+
 [labelled, num_total] = bwlabel(bw2,4);
 
 STATS = regionprops(labelled, {'Area', 'BoundingBox', 'Centroid', 'Solidity', 'MajorAxisLength',... 
@@ -49,7 +63,6 @@ STATS = regionprops(labelled, {'Area', 'BoundingBox', 'Centroid', 'Solidity', 'M
 %identify two people sticking together
 idx = find([STATS.Area] > 1600);
 bw_fats = ismember(labelled, idx);
-
 
 %create separate image without people sticking together
 idx = find([STATS.Area] <= 1600);
