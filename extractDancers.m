@@ -40,8 +40,6 @@ STATS = regionprops(labelled, {'Area', 'BoundingBox', 'Centroid', 'Solidity', 'M
 idx = find([STATS.Area] > 700);
 bw2 = ismember(labelled, idx);
 
-imshow(bw2)
-
 [labelled, num_total] = bwlabel(bw2,4);
 
 STATS = regionprops(labelled, {'Area', 'BoundingBox', 'Centroid', 'Solidity', 'MajorAxisLength',... 
@@ -82,8 +80,8 @@ if num_total == 2 && num == 1
     % 3 people majAx = ~117
     % Based on majAx length, either split into 2 people or 3 people
     
-    cent0_x = cents(:,1)
-    cent0_y = cents(:,2)
+    cent0_x = cents(:,1);
+    cent0_y = cents(:,2);
     
     cent1_x = cents(:,1) + ( thirds(:) .* majAx(:) .* cosd(orient_angle(:)) ); 
     cent1_y = cents(:,2) + ( thirds(:) .* majAx(:) .* sind(orient_angle(:)) );
@@ -171,8 +169,6 @@ diameters = mean([majorAx minorAx], 2);
 
 
 centers = [centers ; n_centers];
-size(radii)
-size(n_radii)
 radii = [radii ; n_radii];
 
 

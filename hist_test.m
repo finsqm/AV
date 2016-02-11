@@ -11,9 +11,21 @@
 
 %[img_cell, norm_img_cell, hsv_img_cell, bg_img_cell] = getAllImages();
 
+load('DATA1/positions1.mat')
+
 show = 0;
 
 start = 1;
+
+total_dist = 0;
+total_num_false = 0;
+total_num_detections = 0;
+
+total_erroneous = 0;
+total_correct = 0;
+
+all_centers = cell(210);
+all_radii = cell(210);
 
 for img_idx = start : 210
     
@@ -205,14 +217,75 @@ else
 end
 
 
-imshow(img_cell{img_idx});
-hold on
-viscircles(person1_center, person1_radius, 'EdgeColor', 'b');
-viscircles(person2_center, person2_radius, 'EdgeColor', 'r');
-viscircles(person3_center, person3_radius, 'EdgeColor', 'g');
-viscircles(person4_center, person4_radius, 'EdgeColor', 'y');
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% EVALUATION %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+predicted_centers = [person1_center ; person2_center ; person3_center ; person4_center];
+prev_centers = predicted_centers;
+ground_centers = positions(:,img_idx,:);
+
+[ num_detections, dist, num_false ] = evaluate1( predicted_centers, ground_centers );
+
+total_dist = total_dist + dist;
+total_num_detections = total_num_detections + num_detections;
+total_num_false = total_num_false + num_false;
+
+if img_idx ~= start
+
+    [ correct, erroneous ] = evaluate2( predicted_centers, ground_centers, prev_centers, prev_ground_centers );
+    total_correct = total_correct + correct;
+    total_erroneous = total_erroneous + erroneous;
+
+end
+
+prev_centers = predicted_centers;
+prev_ground_centers = ground_centers;
+
+all_centers{img_idx} = predicted_centers;
+all_radii{img_idx} = [person1_radius, person2_radius, person3_radius, person4_radius];
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%imshow(img_cell{img_idx});
+%hold on
+%viscircles(person1_center, person1_radius, 'EdgeColor', 'b');
+%viscircles(person2_center, person2_radius, 'EdgeColor', 'r');
+%viscircles(person3_center, person3_radius, 'EdgeColor', 'g');
+%viscircles(person4_center, person4_radius, 'EdgeColor', 'y');
+%hold off
+
+%w = waitforbuttonpress;
+
+end
+
+mean_dist = total_dist / 210;
+
+imshow(img_cell{start})
+
+for i = start : 210
+    
+    hold on
+    viscircles(all_centers{i}(1,:), 1, 'EdgeColor', 'b');
+    viscircles(all_centers{i}(2,:), 1, 'EdgeColor', 'r');
+    viscircles(all_centers{i}(3,:), 1, 'EdgeColor', 'g');
+    viscircles(all_centers{i}(4,:), 1, 'EdgeColor', 'y');
+    
+end
+
 hold off
 
-w = waitforbuttonpress;
+figure
 
+imshow(img_cell{start})
+
+for i = start : 210
+    
+    hold on
+    viscircles(reshape(positions(1,i,:),[1,2]), 1, 'EdgeColor', 'b');
+    viscircles(reshape(positions(2,i,:),[1,2]), 1, 'EdgeColor', 'r');
+    viscircles(reshape(positions(3,i,:),[1,2]), 1, 'EdgeColor', 'g');
+    viscircles(reshape(positions(4,i,:),[1,2]), 1, 'EdgeColor', 'y');
+    
 end
