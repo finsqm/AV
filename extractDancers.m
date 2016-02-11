@@ -31,18 +31,18 @@ a_bw = imdilate(a_bw, se);
 %a_bw = bwmorph(a_bw, 'fill', 10);
 
 %full labelled image
-[labelled, num] = bwlabel(a_bw,4);
+[labelled, ~] = bwlabel(a_bw,4);
 
 STATS = regionprops(labelled, {'Area', 'BoundingBox', 'Centroid', 'Solidity', 'MajorAxisLength',... 
     'MinorAxisLength'});
 
 %get rid of small objects
-idx = find([STATS.Area] > 800);
+idx = find([STATS.Area] > 700);
 bw2 = ismember(labelled, idx);
 
 imshow(bw2)
 
-[labelled, num] = bwlabel(bw2,4);
+[labelled, num_total] = bwlabel(bw2,4);
 
 STATS = regionprops(labelled, {'Area', 'BoundingBox', 'Centroid', 'Solidity', 'MajorAxisLength',... 
     'MinorAxisLength', 'Orientation'});
@@ -60,8 +60,54 @@ bw_no_fats = ismember(labelled, idx);
 
 [labelled, num] = bwlabel(bw_fats,4);
 
-if num > 0
+if num_total == 2 && num == 1
+        
+    STATS = regionprops(labelled, {'Area', 'BoundingBox', 'Centroid', 'Solidity', 'MajorAxisLength',... 
+        'MinorAxisLength', 'Orientation'});
 
+    % based on axis of greatest width, we will chop big blobs 
+    % perpendicular to that axis
+
+    orient_angle = -1 * [STATS.Orientation];
+
+    cents = cat(1, STATS.Centroid);
+    majAx = cat(1, STATS.MajorAxisLength);
+    minAx = cat(1, STATS.MinorAxisLength);
+
+    thirds = repmat(0.33, num, 1);
+
+    % TODO -
+    % Handle case where fat blob contain 3 people
+    % 2 people majAx = ~65
+    % 3 people majAx = ~117
+    % Based on majAx length, either split into 2 people or 3 people
+    
+    cent0_x = cents(:,1)
+    cent0_y = cents(:,2)
+    
+    cent1_x = cents(:,1) + ( thirds(:) .* majAx(:) .* cosd(orient_angle(:)) ); 
+    cent1_y = cents(:,2) + ( thirds(:) .* majAx(:) .* sind(orient_angle(:)) );
+
+    cent2_x = cents(:,1) - ( thirds(:) .* majAx(:) .* cosd(orient_angle(:)) );
+    cent2_y = cents(:,2) - ( thirds(:) .* majAx(:) .* sind(orient_angle(:)) );
+
+
+
+    %get the fat circles info
+    f_centers = cat(1, [cent0_x cent0_y], [cent1_x cent1_y], [cent2_x cent2_y]);        
+    majorAx = cat(1, majAx./2);
+    minorAx = cat(1, minAx./2);
+    both_axes = cat(1, [majorAx minorAx], [majorAx minorAx],  [majorAx minorAx]);
+    diameters = mean(both_axes, 2);
+    f_radii = diameters/3;
+
+    
+    centers = [centers ; f_centers];
+    radii = [radii f_radii];
+        
+        
+elseif num > 0
+            
     STATS = regionprops(labelled, {'Area', 'BoundingBox', 'Centroid', 'Solidity', 'MajorAxisLength',... 
         'MinorAxisLength', 'Orientation'});
 
@@ -125,7 +171,9 @@ diameters = mean([majorAx minorAx], 2);
 
 
 centers = [centers ; n_centers];
-radii = [radii n_radii];
+size(radii)
+size(n_radii)
+radii = [radii ; n_radii];
 
 
 end

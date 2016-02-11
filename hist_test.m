@@ -13,7 +13,7 @@
 
 show = 0;
 
-start = 40;
+start = 1;
 
 for img_idx = start : 210
     
